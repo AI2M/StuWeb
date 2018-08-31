@@ -6,6 +6,10 @@ import HomeComponent from './MainComponent/HomeComponent'
 import SubjectComponent from './MainComponent/SubjectComponent'
 import AnnouncementComponent from './MainComponent/AnnouncementComponent'
 import StudentComponent from './MainComponent/StudentComponent'
+import Header from './Header'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStroopwafel } from '@fortawesome/free-solid-svg-icons'
 import {
   BrowserRouter,
   HashRouter,
@@ -15,7 +19,8 @@ import {
 } from 'react-router-dom';
 
 const { SubMenu } = Menu;
-const { Header, Content, Footer, Sider } = Layout;
+const {  Content, Footer, Sider } = Layout;
+library.add(faStroopwafel);
 
 class App extends Component {
   render() {
@@ -24,7 +29,7 @@ class App extends Component {
 
       <BrowserRouter>
         <Layout>
-          <Header className="header">
+          {/* <Header className="header">
             <div className="logo" />
             <Menu
               theme="dark"
@@ -37,18 +42,22 @@ class App extends Component {
               <Menu.Item key="navStudent"><Link to="/Student">Student</Link></Menu.Item>
               <Menu.Item key="navSubject"><Link to="/Subject">Subject</Link></Menu.Item>
               <Menu.Item key="navAnnouncement"><Link to="/Announcement">Announcement</Link></Menu.Item>
-             
- 
+
+
             </Menu>
 
-          </Header>
-          <Route exact path="/" component={HomeComponent} />
-          <Route path="/Announcement" component={AnnouncementComponent} />
-          <Route path="/Subject" component={SubjectComponent} />
-          <Route path="/Student" component={StudentComponent} />
+          </Header> */}
+          <Content style={{}}>
+            <Route path="/" component={Header} />
+            <Route exact path="/" component={HomeComponent} />
+            <Route path="/Announcement" component={AnnouncementComponent} />
+            <Route path="/Subject" component={SubjectComponent} />
+            <Route path="/Student" component={StudentComponent} />
+          </Content>
+
 
           <Footer style={{ textAlign: 'center' }}>
-           Student-W ©2018 Created by Apotoxin
+            Student-W ©2018 Created by Apotoxin
           </Footer>
         </Layout>
       </BrowserRouter>
