@@ -58,7 +58,7 @@ class ResponsiveNav extends Component {
       // </Menu>
       <Collapse onChange={callback}>
         <Panel showArrow={false} header={ <div style={{verticalAlign:'center'}}><Icon type="bars" style={{ color: '#fff',fontSize:'18px'}} />
-          <p style={{color:'white',display:'inline'}}>  Logo</p></div> } style={{backgroundColor:'black'}} >
+          <p style={{color:'white',display:'inline'}}>  Logo</p></div> } style={{backgroundColor:'#001529'}} >
         <MenuMarkup
           onLinkClick={() => this.handleMenuVisibility(false)}
           activeLinkKey={this.props.activeLinkKey}

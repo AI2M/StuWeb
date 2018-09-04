@@ -1,49 +1,102 @@
 import React, { Component } from 'react';
-import { DatePicker, Layout, Menu, Breadcrumb, Icon } from 'antd';
+import { Layout, Menu,  Icon } from 'antd';
+import throttle from 'lodash.throttle';
+import ShowAnnouncementComponent from '../SubComponent/Home/ShowAnnounceComponent'
+import ShowScoreComponent from '../SubComponent/Home/ShowScoreComponent'
 import 'antd/dist/antd.css';
+import {
+    BrowserRouter,
+    Route,
+    Link,
+} from 'react-router-dom';
 const { SubMenu } = Menu;
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Sider } = Layout;
 
 class HomeComponent extends Component {
+    state = {
+        viewportWidth: 0,
+    }
+    componentDidMount() {
+        this.saveViewportDimensions();
+        window.addEventListener('resize', this.saveViewportDimensions);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.saveViewportDimensions);
+    }
+
+    saveViewportDimensions = throttle(() => {
+        this.setState({
+            viewportWidth: window.innerWidth,
+        })
+    }, this.props.applyViewportChange);
+
     render() {
+        if (this.state.viewportWidth > this.props.mobileBreakPoint){
+            return(
+                <BrowserRouter>
+                    <Layout style={{ padding: '22px 20px', background: '#fff' ,height:'100vh'}}>
+                        <Sider>
+                        <HomeMenu></HomeMenu>
+                        </Sider>
+                        <HomeContent></HomeContent>
+                    </Layout>    
+            </BrowserRouter>
+            );
+        }
+
         return (
-            <Content style={{ padding: '0 20px' }}>
-                <Breadcrumb style={{ margin: '16px 0' }}>
-                    <Breadcrumb.Item>Home</Breadcrumb.Item>
-                    <Breadcrumb.Item>List</Breadcrumb.Item>
-                    <Breadcrumb.Item>App</Breadcrumb.Item>
-                </Breadcrumb>
-                <Layout style={{ padding: '22px 0', background: '#fff' }}>
-
-                    <Sider width={200} style={{ background: '#fff' }}>
-                        <Menu
-                            mode="inline"
-                            defaultSelectedKeys={['1']}
-                            defaultOpenKeys={['sub1']}
-                            style={{ height: '100%' }}
-                        >
-                            <SubMenu key="showAnnounce" title={<span><Icon type="notification" />Announce</span>}>
-                                <Menu.Item key="1">Type1</Menu.Item>
-                                <Menu.Item key="2">Type2</Menu.Item>
-                                <Menu.Item key="3">Type3</Menu.Item>
-                            </SubMenu>
-                            <SubMenu key="showScore" title={<span><Icon type="laptop" />Score</span>}>
-                                <Menu.Item key="5">Subject1</Menu.Item>
-                                <Menu.Item key="6">Subject2</Menu.Item>
-                                <Menu.Item key="7">Subject3</Menu.Item>
-                                <Menu.Item key="8">Subject4</Menu.Item>
-                            </SubMenu>
-                        </Menu>
-                    </Sider>
-
-                    <Content style={{ padding: '0 24px', minHeight: 280 }}>
-                        Content
-                    </Content>
-
-                </Layout>
-            </Content>
+            <BrowserRouter>
+                <Content style={{ padding: '0 20px'}}>
+                    <Layout style={{ padding: '22px 0', background: '#fff' }}>
+                        <div style={{ marginBottom:'20px' }}>
+                        <HomeMenu></HomeMenu>
+                        </div>
+                        <HomeContent></HomeContent>
+                    </Layout>
+                </Content>
+            </BrowserRouter>
         );
     }
 }
+const HomeContent=()=>{
+    return(
+        <Content style={{ padding: '0 24px', minHeight: 280 }}>
+        <Route exact path="/" component={ShowAnnouncementComponent} />
+        <Route path="/showAnnounce" component={ShowAnnouncementComponent} />
+        <Route path="/showScore" component={ShowScoreComponent} />
+    </Content>
+    )
+}
+const HomeMenu = () => {
+    return (
+        <Menu
+            mode="inline"
+            theme="dark"
+            defaultSelectedKeys={['showAnnounce']}
+            defaultOpenKeys={['showAnnounce']}
+            style={{ height: '100%' }}
+        >
+            <Menu.Item key="showAnnounce">
+                <Link to="/showAnnounce">
+                    <Icon type="notification" style={{ fontSize: 20 }} />
+                    Announcement
+                            </Link>
+            </Menu.Item>
+            <Menu.Item key="showScore">
+                <Link to="/showScore">
+                    <Icon type="laptop" style={{ fontSize: 20 }} />
+                    Score
+                            </Link>
+            </Menu.Item>
+
+        </Menu>
+    )
+}
+HomeComponent.defaultProps = {
+    mobileBreakPoint: 575,
+    applyViewportChange: 250,
+};
+
 
 export default HomeComponent

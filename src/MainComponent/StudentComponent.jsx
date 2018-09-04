@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { DatePicker, Layout, Menu, Breadcrumb, Icon, Slider } from 'antd';
+import throttle from 'lodash.throttle';
 import 'antd/dist/antd.css';
 import AddStudentComponent from '../SubComponent/Student/AddStudent.jsx'
 import ChangeStudentComponent from '../SubComponent/Student/ChangeStudent.jsx'
@@ -14,26 +15,38 @@ import {
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
 
+
 class StudentComponent extends Component {
+    state={
+        viewportWidth:0,
+    }
+    componentDidMount() {
+        this.saveViewportDimensions();
+        window.addEventListener('resize', this.saveViewportDimensions);
+      }
+    
+      componentWillUnmount() {
+        window.removeEventListener('resize', this.saveViewportDimensions);
+      }
+    
+      saveViewportDimensions = throttle(() => {
+        this.setState({
+          viewportWidth: window.innerWidth,
+        })
+      }, this.props.applyViewportChange);
+
     render() {
-        var m=0;
-        if (m==1){
+        if (this.state.viewportWidth > this.props.mobileBreakPoint){
             return(
                 <BrowserRouter>
-                <Content style={{ padding: '0 20px'}}>
-                    <Layout style={{ padding: '22px 0', background: '#fff' }}>
-                        <Sider style={{ marginBottom:'20px' }}>
-                        <StudentMenu themecolor="light"></StudentMenu>
+                    <Layout style={{ padding: '22px 20px', background: '#fff' ,height:'100vh'}}>
+                        <Sider>
+                        <StudentMenu></StudentMenu>
                         </Sider>
-                        <Content style={{ padding: '0 24px', minHeight: 280 }}>
-                            <Route exact path="/Student" component={AddStudentComponent} />
-                            <Route path="/Student/addStudent" component={AddStudentComponent} />
-                            <Route path="/Student/changeStudent" component={ChangeStudentComponent} />
-                        </Content>
-                    </Layout>
-                </Content>
+                        <StudentContent></StudentContent>
+                    </Layout>    
             </BrowserRouter>
-            )
+            );
         }
 
         return (
@@ -41,29 +54,36 @@ class StudentComponent extends Component {
                 <Content style={{ padding: '0 20px'}}>
                     <Layout style={{ padding: '22px 0', background: '#fff' }}>
                         <div style={{ marginBottom:'20px' }}>
-                        <StudentMenu themecolor="dark"></StudentMenu>
+                        <StudentMenu></StudentMenu>
                         </div>
-                        <Content style={{ padding: '0 24px', minHeight: 280 }}>
-                            <Route exact path="/Student" component={AddStudentComponent} />
-                            <Route path="/Student/addStudent" component={AddStudentComponent} />
-                            <Route path="/Student/changeStudent" component={ChangeStudentComponent} />
-                        </Content>
+                        <StudentContent></StudentContent>
                     </Layout>
                 </Content>
             </BrowserRouter>
         );
     }
 }
+
+const StudentContent=()=>{
+    return(
+        <Content style={{ padding: '0 24px', minHeight: 280 }}>
+        <Route exact path="/Student" component={AddStudentComponent} />
+        <Route path="/Student/addStudent" component={AddStudentComponent} />
+        <Route path="/Student/changeStudent" component={ChangeStudentComponent} />
+    </Content>
+    )
+}
+
 const StudentMenu=(props)=> {
         return(
             <Menu
-            theme= {props.themecolor}
+            theme= "dark"
             mode="inline"
             defaultSelectedKeys={['studentAdd']}
             defaultOpenKeys={['studentAdd']}
             style={{ height: '100%'}}
         >
-            <Menu.Item key="studentAdd" style={{color:'green'}}>
+            <Menu.Item key="studentAdd">
                 <Link to="/Student/addStudent">
                     <Icon type="user-add" style={{fontSize: 20 }} />
                     Add Student
@@ -78,5 +98,9 @@ const StudentMenu=(props)=> {
         </Menu>
         )
 }
+StudentComponent.defaultProps = {
+    mobileBreakPoint: 575,
+    applyViewportChange: 250,
+  };
 
 export default StudentComponent
