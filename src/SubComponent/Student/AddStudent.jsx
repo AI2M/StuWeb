@@ -1,155 +1,175 @@
 import React, { Component } from 'react';
-import { Form, Input, Tooltip, Icon, Checkbox, Button } from 'antd';
-import 'antd/dist/antd.css';
-const FormItem = Form.Item;
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
+import classNames from 'classnames';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import MenuItem from '@material-ui/core/MenuItem';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import Icon from '@material-ui/core/Icon';
+import AddIcon from '@material-ui/icons/Add';
 
+const styles = theme => ({
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    width:300,
+    margin:'0 auto'
+  },
+  margin: {
+    margin: theme.spacing.unit,
+  },
+  withoutLabel: {
+    marginTop: theme.spacing.unit * 3,
+  },
+  textField: {
+    flexBasis: '100%',
+  },
+  button: {
+    margin: '0 auto',
+    marginTop: theme.spacing.unit,
+  },
+});
+
+const titleranges = [
+  {
+    value: 'นาย',
+    label: 'นาย',
+  },
+  {
+    value: 'นางสาว',
+    label: 'นางสาว',
+  },
+  {
+    value: 'เด็กชาย',
+    label: 'เด็กชาย',
+  },
+  {
+    value: 'เด็กหญิง',
+    label: 'เด็กหญิง',
+  },
+];
 
 class AddStudentComponent extends Component {
   state = {
-    confirmDirty: false,
-    autoCompleteResult: [],
+    title: '',
+    firstname: '',
+    lastname: '',
+    class: '',
+    id: '',
+    password:'',
   };
 
-  handleSubmit = (e) => {
+  handlesubmit = (e)=>{
     e.preventDefault();
-    this.props.form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-      }
-    });
   }
+  handleChange = prop => event => {
+    this.setState({ [prop]: event.target.value });
+  };
 
-  handleConfirmBlur = (e) => {
-    const value = e.target.value;
-    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-  }
+  handleMouseDownPassword = event => {
+    event.preventDefault();
+  };
 
-  compareToFirstPassword = (rule, value, callback) => {
-    const form = this.props.form;
-    if (value && value !== form.getFieldValue('password')) {
-      callback('Two passwords that you enter is inconsistent!');
-    } else {
-      callback();
-    }
-  }
-
-  validateToNextPassword = (rule, value, callback) => {
-    const form = this.props.form;
-    if (value && this.state.confirmDirty) {
-      form.validateFields(['confirm'], { force: true });
-    }
-    callback();
-  }
-  validateId = (rule, value, callback)=>{
-    const form = this.props.form;
-    if(value){
-
-    }
-  }
-
+  handleClickShowPassword = () => {
+    this.setState(state => ({ showPassword: !state.showPassword }));
+  };
 
   render() {
-    const { getFieldDecorator } = this.props.form;
-
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 8 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 },
-      },
-    };
-    const tailFormItemLayout = {
-      wrapperCol: {
-        xs: {
-          span: 24,
-          offset: 0,
-        },
-        sm: {
-          span: 16,
-          offset: 8,
-        },
-      },
-    };
-
-
+    const { classes } = this.props;
     return (
-      <Form onSubmit={this.handleSubmit}>
-        <FormItem
-          {...formItemLayout}
-          label="Student ID"
+      <form className={classes.root}>
+        <TextField
+          select
+          id="Title"
+          label="คำนำหน้าชื่อ"
+          className={classNames(classes.margin, classes.textField)}
+          value={this.state.title}
+          onChange={this.handleChange('title')}
+          
         >
-          {getFieldDecorator('id', {
-            rules: [{
-                validator: this.validateId,
-            }, {
-              required: true, message: 'Please input your Student ID!',
-            }],
-          })(
-            <Input />
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="Password"
+          {titleranges.map(option => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          label="ชื่อ"
+          id="Firstname"
+          value={this.state.firstname}
+          className={classNames(classes.margin, classes.textField)}
+          onChange={this.handleChange('firstname')}
+        />
+           <TextField
+          label="นามสกุล"
+          id="Lastname"
+          value={this.state.lastname}
+          className={classNames(classes.margin, classes.textField)}
+          onChange={this.handleChange('lastname')}
+        />
+        <FormControl className={classNames(classes.margin, classes.withoutLabel,classes.textField)}>
+        
+          <Input
+            id="class"
+            value={this.state.class}
+            onChange={this.handleChange('class')}
+            startAdornment={<InputAdornment position="start">มัธยมศึกษาปีที่</InputAdornment>}
+          />
+          <FormHelperText id="class-helper-text">ตัวอย่าง.มัธยมศึกษาปีที่ 6/13</FormHelperText>
+        </FormControl>
+        <FormControl
+          className={classNames(classes.margin, classes.textField)}
         >
-          {getFieldDecorator('password', {
-            rules: [{
-              required: true, message: 'Please input your password!',
-            }, {
-              validator: this.validateToNextPassword,
-            }],
-          })(
-            <Input type="password" />
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="Confirm Password"
-        >
-          {getFieldDecorator('confirm', {
-            rules: [{
-              required: true, message: 'Please confirm your password!',
-            }, {
-              validator: this.compareToFirstPassword,
-            }],
-          })(
-            <Input type="password" onBlur={this.handleConfirmBlur} />
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label={(
-            <span>
-              Nickname&nbsp;
-              <Tooltip title="What do you want others to call you?">
-                <Icon type="question-circle-o" />
-              </Tooltip>
-            </span>
-          )}
-        >
-          {getFieldDecorator('nickname', {
-            rules: [{ required: true, message: 'Please input your nickname!', whitespace: true }],
-          })(
-            <Input />
-          )}
-        </FormItem>
-  
-        <FormItem {...tailFormItemLayout}>
-          {getFieldDecorator('agreement', {
-            valuePropName: 'checked',
-          })(
-            <Checkbox>I have read the <a href="">agreement</a></Checkbox>
-          )}
-        </FormItem>
-        <FormItem {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">Create</Button>
-        </FormItem>
-      </Form>
+        <InputLabel htmlFor="adornment-id">รหัสนักเรียน(username)</InputLabel>
+          <Input
+            id="id"
+            value={this.state.id}
+            onChange={this.handleChange('id')}
+          />
+          <FormHelperText id="id-helper-text">ตัวอย่าง.310xx</FormHelperText>
+        </FormControl>
+        <FormControl className={classNames(classes.margin, classes.textField)}>
+          <InputLabel htmlFor="adornment-password">รหัสผ่าน(password)</InputLabel>
+          <Input
+            id="password"
+            type={this.state.showPassword ? 'text' : 'password'}
+            value={this.state.password}
+            onChange={this.handleChange('password')}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="Toggle password visibility"
+                  onClick={this.handleClickShowPassword}
+                  onMouseDown={this.handleMouseDownPassword}
+                >
+                  {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+        <Tooltip title="เพิ่มข้อมูลนักเรียนเข้าไปในฐานข้อมูล"  placement="right">
+        <Button variant="extendedFab" color="primary" className={classes.button}>
+        เพิ่มข้อมูล
+      </Button>
+      </Tooltip>
+      <br/>
+      <p>
+        {this.state.firstname}
+      </p>
+      
+      </form>
     );
   }
+
 }
-const WrappedRegistrationForm = Form.create()(AddStudentComponent);
-export default WrappedRegistrationForm
+
+export default withStyles(styles)(AddStudentComponent)

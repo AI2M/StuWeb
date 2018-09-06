@@ -39,7 +39,7 @@ class StudentComponent extends Component {
         if (this.state.viewportWidth > this.props.mobileBreakPoint){
             return(
                 <BrowserRouter>
-                    <Layout style={{ padding: '22px 20px', background: '#fff' ,height:'100vh'}}>
+                    <Layout style={{ padding: '22px 20px 70px', background: '#fff' ,height:'100vh'}}>
                         <Sider>
                         <StudentMenu></StudentMenu>
                         </Sider>
@@ -52,7 +52,7 @@ class StudentComponent extends Component {
         return (
             <BrowserRouter>
                 <Content style={{ padding: '0 20px'}}>
-                    <Layout style={{ padding: '22px 0', background: '#fff' }}>
+                    <Layout style={{ padding: '22px 0 70px', background: '#fff' }}>
                         <div style={{ marginBottom:'20px' }}>
                         <StudentMenu></StudentMenu>
                         </div>
