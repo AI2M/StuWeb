@@ -75,8 +75,8 @@ class EditableTable extends React.Component {
             data,
             datasearch: [],
             searchby: 'id',
-            searching: false,
-            editingKey: ''
+            editingKey: '',
+            searchvalue:''
         };
 
         this.columns = [
@@ -139,21 +139,21 @@ class EditableTable extends React.Component {
                                 </span>
                             ) : (
                                     <div>
-                                        <a onClick={() => this.edit(record.key)} style={{marginRight:10}} >Edit</a>
+                                        <a onClick={() => this.edit(record.key)} style={{ marginRight: 10 }} >Edit</a>
                                         {
-                                            this.state.searching ? (this.state.datasearch.length >= 1
-                                            ? (
-                                                <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record.key)}>
-                                                    <a href="javascript:;">Delete</a>
-                                                </Popconfirm>
-                                            ) : null)
-                                            :(this.state.data.length >= 1
+                                            this.state.searchvalue ? (this.state.datasearch.length >= 1
                                                 ? (
                                                     <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record.key)}>
                                                         <a href="javascript:;">Delete</a>
                                                     </Popconfirm>
                                                 ) : null)
-                                            }
+                                                : (this.state.data.length >= 1
+                                                    ? (
+                                                        <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record.key)}>
+                                                            <a href="javascript:;">Delete</a>
+                                                        </Popconfirm>
+                                                    ) : null)
+                                        }
                                     </div>
 
 
@@ -163,6 +163,17 @@ class EditableTable extends React.Component {
                 },
             },
         ];
+    }
+    handleDelete = (key) => {
+        if (this.state.searchvalue) {
+            const datasearch = [...this.state.datasearch];
+            this.setState({ datasearch: datasearch.filter(item => item.key !== key) });
+        }
+        else {
+            const data = [...this.state.data];
+            this.setState({ data: data.filter(item => item.key !== key) });
+        }
+
     }
 
     isEditing = (record) => {
@@ -178,21 +189,42 @@ class EditableTable extends React.Component {
             if (error) {
                 return;
             }
-            const newData = [...this.state.data];
-            const index = newData.findIndex(item => key === item.key);
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, {
-                    ...item,
-                    ...row,
-                });
-                this.setState({ data: newData, editingKey: '' });
-                console.log("ba");
-            } else {
-                console.log("aa");
-                newData.push(row);
-                this.setState({ data: newData, editingKey: '' });
+            if (!this.state.searchvalue) {
+                const newData = [...this.state.data];
+                const index = newData.findIndex(item => key === item.key);
+                if (index > -1) {
+                    const item = newData[index];
+                    newData.splice(index, 1, {
+                        ...item,
+                        ...row,
+                    });
+                    this.setState({ data: newData, editingKey: '' });
+                    console.log("ba");
+                } else {
+                    console.log("aa");
+                    newData.push(row);
+                    this.setState({ data: newData, editingKey: '' });
+                }
+
             }
+            else {
+                const newData = [...this.state.data];
+                const index = newData.findIndex(item => key === item.key);
+                if (index > -1) {
+                    const item = newData[index];
+                    newData.splice(index, 1, {
+                        ...item,
+                        ...row,
+                    });
+                    this.setState({ datasearch: newData, editingKey: '' });
+                    console.log("ba");
+                } else {
+                    console.log("aa");
+                    newData.push(row);
+                    this.setState({ datasearch: newData, editingKey: '' });
+                }
+            }
+
         });
     }
 
@@ -201,7 +233,7 @@ class EditableTable extends React.Component {
     };
 
     SearchHandle = (e) => {
-        this.setState({ searching: true });
+        this.setState({searchvalue:e.target.value});
         let textsearch = e.target.value;
         let newData;
         if (this.state.searchby === 'id') {
@@ -224,6 +256,9 @@ class EditableTable extends React.Component {
         this.setState({ searchby: e.key });
     }
 
+    emitEmpty = () => {
+        this.setState({ searchvalue: '' });
+      }
 
 
     render() {
@@ -257,6 +292,7 @@ class EditableTable extends React.Component {
                 <Menu.Item key="class">Class</Menu.Item>
             </Menu>
         );
+        const suffix = this.state.searchvalue ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
 
 
         return (
@@ -267,10 +303,12 @@ class EditableTable extends React.Component {
                             Column <Icon type="down" />
                         </Button>
                     </Dropdown>
-                    <Search
+                    <Input
                         placeholder={"search by " + this.state.searchby}
                         // onSearch={value => console.log(value)}
+                        suffix={suffix}
                         onChange={this.SearchHandle}
+                        value={this.state.searchvalue}
                         style={{ width: 300 }}
                     />
                 </div>
@@ -278,7 +316,7 @@ class EditableTable extends React.Component {
                     pagination={{ pageSize: 5 }}
                     components={components}
                     bordered
-                    dataSource={this.state.searching ? this.state.datasearch : this.state.data}
+                    dataSource={this.state.searchvalue ? this.state.datasearch : this.state.data}
                     columns={columns}
                     rowClassName="editable-row"
                 />
