@@ -8,6 +8,16 @@ function hasErrors(fieldsError) {
 }
 
 class AddStudentComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      firstname:'',
+      lastname:'',
+      class:'',
+      studentid:'',
+      password:'',
+    };
+  }
   componentDidMount() {
     // To disabled submit button at the beginning.
     this.props.form.validateFields();
@@ -21,6 +31,9 @@ class AddStudentComponent extends Component {
       }
     });
   }
+  handleInputChange=(prop)=>(event)=>{
+    this.setState({[prop]:event.target.value});
+  }
 
   render() {
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
@@ -31,60 +44,91 @@ class AddStudentComponent extends Component {
     const firstnameError = isFieldTouched('firstname') && getFieldError('firstname');
     const lastnameError = isFieldTouched('lastname') && getFieldError('lastname');
     const classError = isFieldTouched('class') && getFieldError('class');
+
     return (
-      <Form layout="block" onSubmit={this.handleSubmit}>
+      <Form layout="vertical" onSubmit={this.handleSubmit}>
 
          <FormItem
+          style={{width:300, margin:'0 auto', marginBottom:20, marginTop:20}}
           validateStatus={firstnameError ? 'error' : ''}
           help={firstnameError || ''}
         >
           {getFieldDecorator('firstname', {
-            rules: [{ required: true, message: 'Please input firstname!' }],
+            rules: [{ 
+              required: true, 
+              message: 'Please input firstname!, firstname much only  letters',
+              pattern: '^[a-zA-Z]+$'
+            }],
           })(
-            <Input placeholder="Firstname" />
+            <Input placeholder="Firstname"  onChange={this.handleInputChange('firstname')} />
           )}
         </FormItem>
 
         <FormItem
+          style={{width:300, margin:'0 auto', marginBottom:20}}
           validateStatus={lastnameError ? 'error' : ''}
           help={lastnameError || ''}
         >
           {getFieldDecorator('lastname', {
-            rules: [{ required: true, message: 'Please input lastname!' }],
+            rules: [{ 
+              required: true, 
+              message: 'Please input lastname!, lastname much only  letters',
+              pattern: '^[a-zA-Z]+$'
+             }],
           })(
-            <Input  placeholder="Lastname" />
+            <Input  placeholder="Lastname" onChange={this.handleInputChange('lastname')}/>
           )}
         </FormItem>
         <FormItem
+          style={{width:300, margin:'0 auto', marginBottom:20}}
           validateStatus={classError ? 'error' : ''}
           help={classError || ''}
         >
           {getFieldDecorator('class', {
-            rules: [{ required: true, message: 'Please input class!' }],
+            rules: [{ 
+              required: true, 
+              message: 'Please input class, example: 6/13',
+              pattern:'^[1-6]{1}[/]([1-9]{1}||[1-9]{1}[0-9]{1})$'
+            }],
           })(
-            <Input placeholder="Class" />
+            <Input placeholder="Class" onChange={this.handleInputChange('class')}/>
           )}
         </FormItem>
 
         <FormItem
+        style={{width:300, margin:'0 auto', marginBottom:20}}
           validateStatus={studentidError ? 'error' : ''}
           help={studentidError || ''}
         >
           {getFieldDecorator('studentid', {
-            rules: [{ required: true, message: 'Please input student id!' }],
+            rules: [{ 
+              required: true, 
+              message: 'Please input student id, student id much only 5 numbers',
+              pattern: '^[0-9]{5}$'
+             }],
           })(
-            <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Student Id" />
+            <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} 
+            onChange={this.handleInputChange('studentid')}
+             placeholder="Student Id" />
           )}
         </FormItem>
 
         <FormItem
+        style={{width:300, margin:'0 auto', marginBottom:20}}
           validateStatus={passwordError ? 'error' : ''}
           help={passwordError || ''}
         >
           {getFieldDecorator('password', {
-            rules: [{ required: true, message: 'Please input your Password!' }],
+            rules: [{
+              required: true,
+              message: 'Please input your Password!, password much atleast 5 characters without special characters  ',
+              pattern:'[a-zA-Z0-9]{5,}'
+            }],
           })(
-            <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />
+            <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} 
+            type="password" 
+            placeholder="Password" 
+            onChange={this.handleInputChange('password')}/>
           )}
         </FormItem>
 
