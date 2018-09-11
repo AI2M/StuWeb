@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Table, Input, InputNumber, Popconfirm, Form, message, Dropdown, Menu, Icon, Button } from 'antd';
 import 'antd/dist/antd.css';
+import './student.css'
 
 const data = [];
 for (let i = 0; i < 100; i++) {
@@ -76,15 +77,20 @@ class EditableTable extends React.Component {
             datasearch: [],
             searchby: 'id',
             editingKey: '',
-            searchvalue:''
+            searchvalue:'',
         };
+
 
         this.columns = [
             {
                 title: 'Id',
                 dataIndex: 'id',
-                width: '12%',
-                editable: true,
+                width: 110,
+                fixed:'left',
+                key:'id',
+                editable: false,
+                defaultSortOrder: 'ascend',
+                sorter: (a, b) => a.id - b.id,
             },
             {
                 title: 'First name',
@@ -262,6 +268,7 @@ class EditableTable extends React.Component {
 
 
     render() {
+
         const components = {
             body: {
                 row: EditableFormRow,
@@ -297,7 +304,7 @@ class EditableTable extends React.Component {
 
         return (
             <div>
-                <div style={{ marginBottom: 10, textAlign: 'center' }}>
+                <div style={{ marginBottom: 10, textAlign: 'center'  }}>
                     <Dropdown overlay={menu}>
                         <Button style={{ marginRight: 1 }}>
                             Column <Icon type="down" />
@@ -309,10 +316,11 @@ class EditableTable extends React.Component {
                         suffix={suffix}
                         onChange={this.SearchHandle}
                         value={this.state.searchvalue}
-                        style={{ width: 300 }}
+                        style={{ width: '30vw'}}
                     />
                 </div>
                 <Table
+                    scroll={{ x: 800 }}
                     pagination={{ pageSize: 5 }}
                     components={components}
                     bordered
