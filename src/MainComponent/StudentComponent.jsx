@@ -66,7 +66,7 @@ class StudentComponent extends Component {
 
 const StudentContent=()=>{
     return(
-        <Content style={{ padding: '0 24px', minHeight: 280 }}>
+        <Content style={{ padding: '0 24px', minHeight: 280,margin:'auto'}}>
         <Route exact path="/Student" component={AddStudentComponent} />
         <Route path="/Student/addStudent" component={AddStudentComponent} />
         <Route path="/Student/changeStudent" component={ChangeStudentComponent} />

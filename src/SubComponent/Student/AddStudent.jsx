@@ -46,8 +46,10 @@ class AddStudentComponent extends Component {
     const classError = isFieldTouched('class') && getFieldError('class');
 
     return (
-      <Form layout="vertical" onSubmit={this.handleSubmit}>
-
+      
+      <Form layout="vertical" style={{textAlign:'center'}} onSubmit={this.handleSubmit}>
+      <h1 style={{color:'#d9d9d9'}}>Add Student Information</h1>
+      <br></br>
          <FormItem
           style={{width:300, margin:'0 auto', marginBottom:20, marginTop:20}}
           validateStatus={firstnameError ? 'error' : ''}
